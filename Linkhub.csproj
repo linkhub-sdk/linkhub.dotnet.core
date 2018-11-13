@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
     	<PackageId>Linkhub</PackageId>
-    	<Version>1.0.3</Version>
+    	<Version>1.0.4</Version>
     	<Authors>Linkhub</Authors>
     	<Company>Linkhub</Company>
         <TargetFramework>netcoreapp2.0</TargetFramework>
