@@ -128,6 +128,16 @@ namespace Linkhub
 
             HttpWebRequest request = (HttpWebRequest) WebRequest.Create(URI);
 
+            if (this._ProxyYN == true)
+            {
+                WebProxy proxyRequest = new WebProxy();
+
+                Uri proxyURI = new Uri(this._ProxyAddress);
+                proxyRequest.Address = proxyURI;
+                proxyRequest.Credentials = new NetworkCredential(this._ProxyUserName, this._ProxyPassword);
+                request.Proxy = proxyRequest;
+            }
+
             request.Headers.Add("x-lh-date", xDate);
 
             request.Headers.Add("x-lh-version", APIVersion);
@@ -207,6 +217,17 @@ namespace Linkhub
 
             string URI = (UseStaticIP ? ServiceURL_REAL_GA : ServiceURL_REAL) + "/" + ServiceID + "/Point";
             HttpWebRequest request = (HttpWebRequest) WebRequest.Create(URI);
+
+            if (this._ProxyYN == true)
+            {
+                WebProxy proxyRequest = new WebProxy();
+
+                Uri proxyURI = new Uri(this._ProxyAddress);
+                proxyRequest.Address = proxyURI;
+                proxyRequest.Credentials = new NetworkCredential(this._ProxyUserName, this._ProxyPassword);
+                request.Proxy = proxyRequest;
+            }
+
             request.Headers.Add("Authorization", "Bearer" + " " + BearerToken);
             request.Method = "GET";
 
@@ -247,6 +268,17 @@ namespace Linkhub
 
             string URI = (UseStaticIP ? ServiceURL_REAL_GA : ServiceURL_REAL) + "/" + ServiceID + "/PartnerPoint";
             HttpWebRequest request = (HttpWebRequest) WebRequest.Create(URI);
+
+            if (this._ProxyYN == true)
+            {
+                WebProxy proxyRequest = new WebProxy();
+
+                Uri proxyURI = new Uri(this._ProxyAddress);
+                proxyRequest.Address = proxyURI;
+                proxyRequest.Credentials = new NetworkCredential(this._ProxyUserName, this._ProxyPassword);
+                request.Proxy = proxyRequest;
+            }
+
             request.Headers.Add("Authorization", "Bearer" + " " + BearerToken);
             request.Method = "GET";
 
@@ -286,6 +318,18 @@ namespace Linkhub
             
             string URI = (UseStaticIP ? ServiceURL_REAL_GA : ServiceURL_REAL) + "/" + ServiceID + "/URL?TG=" + TOGO;
             HttpWebRequest request = (HttpWebRequest) WebRequest.Create(URI);
+
+            if (this._ProxyYN == true)
+            {
+                WebProxy proxyRequest = new WebProxy();
+
+                Uri proxyURI = new Uri(this._ProxyAddress);
+                proxyRequest.Address = proxyURI;
+                proxyRequest.Credentials = new NetworkCredential(this._ProxyUserName, this._ProxyPassword);
+                request.Proxy = proxyRequest;
+            }
+
+
             request.Headers.Add("Authorization", "Bearer" + " " + BearerToken);
             request.Method = "GET";
 
