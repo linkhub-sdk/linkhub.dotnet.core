@@ -35,6 +35,11 @@ namespace Linkhub
         private string _LinkID;
         private string _SecretKey;
 
+        private bool _ProxyYN;
+        private String _ProxyAddress;
+        private String _ProxyUserName;
+        private String _ProxyPassword;
+
         public Authority(string LinkID, string SecretKey)
         {
             if (string.IsNullOrEmpty(LinkID)) throw new LinkhubException(-99999999, "LinkID is Not entered");
@@ -42,6 +47,20 @@ namespace Linkhub
 
             this._LinkID = LinkID;
             this._SecretKey = SecretKey;
+            this._ProxyYN = false;
+        }
+
+        public Authority(string LinkID, string SecretKey, bool ProxyYN, string ProxyAddress, string ProxyUserName, string ProxyPassword)
+        {
+            if (String.IsNullOrEmpty(LinkID)) throw new LinkhubException(-99999999, "NO LinkID");
+            if (String.IsNullOrEmpty(SecretKey)) throw new LinkhubException(-99999999, "NO SecretKey");
+
+            this._LinkID = LinkID;
+            this._SecretKey = SecretKey;
+            this._ProxyYN = ProxyYN;
+            this._ProxyAddress = ProxyAddress;
+            this._ProxyUserName = ProxyUserName;
+            this._ProxyPassword = ProxyPassword;
         }
 
         public string getTime()
@@ -53,6 +72,16 @@ namespace Linkhub
             string URI = (UseStaticIP ? ServiceURL_REAL_GA : ServiceURL_REAL) + "/Time";
 
             HttpWebRequest request = (HttpWebRequest) WebRequest.Create(URI);
+
+            if (this._ProxyYN == true)
+            {
+                WebProxy proxyRequest = new WebProxy();
+
+                Uri proxyURI = new Uri(this._ProxyAddress);
+                proxyRequest.Address = proxyURI;
+                proxyRequest.Credentials = new NetworkCredential(this._ProxyUserName, this._ProxyPassword);
+                request.Proxy = proxyRequest;
+            }
 
             request.Method = "GET";
 
