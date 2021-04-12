@@ -126,7 +126,7 @@ namespace Linkhub
             return getToken(ServiceID, access_id, scope, null, false, false);
         }
 
-        public Token getToken(string ServiceID, string access_id, List<string> scope, string ForwardIP = null, bool UseStaticIP = false, bool UseLocalTimeYN)
+        public Token getToken(string ServiceID, string access_id, List<string> scope, string ForwardIP = null, bool UseStaticIP = false, bool UseLocalTimeYN = false)
         {
             if (string.IsNullOrEmpty(ServiceID)) throw new LinkhubException(-99999999, "ServiceID is Not entered");
 
