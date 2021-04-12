@@ -10,7 +10,7 @@
  * http://www.linkhub.co.kr
  * Author : LInkhub Dev (code@linkhub.com)
  * Written : 2018-10-25
- * Updated : 2020-07-14
+ * Updated : 2021-04-12
  * Thanks for your interest. 
  * 
  * =================================================================================
@@ -65,58 +65,68 @@ namespace Linkhub
 
         public string getTime()
         {
-            return getTime(false);
+            return getTime(false, false);
         }
-        public string getTime(bool UseStaticIP)
+        public string getTime(bool UseStaticIP, bool UseLocalTimeYN)
         {
-            string URI = (UseStaticIP ? ServiceURL_REAL_GA : ServiceURL_REAL) + "/Time";
-
-            HttpWebRequest request = (HttpWebRequest) WebRequest.Create(URI);
-
-            if (this._ProxyYN == true)
+            if (UseLocalTimeYN)
             {
-                WebProxy proxyRequest = new WebProxy();
+                DateTime localTime = DateTime.UtcNow;
 
-                Uri proxyURI = new Uri(this._ProxyAddress);
-                proxyRequest.Address = proxyURI;
-                proxyRequest.Credentials = new NetworkCredential(this._ProxyUserName, this._ProxyPassword);
-                request.Proxy = proxyRequest;
-            }
+                return localTime.ToString("yyyy-MM-ddTHH:mm:ssZ");
 
-            request.Method = "GET";
-
-            try
+            } else
             {
-                HttpWebResponse response = (HttpWebResponse) request.GetResponse();
+                string URI = (UseStaticIP ? ServiceURL_REAL_GA : ServiceURL_REAL) + "/Time";
 
-                using (Stream stream = response.GetResponseStream())
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URI);
+
+                if (this._ProxyYN == true)
                 {
-                    StreamReader reader = new StreamReader(stream, Encoding.UTF8);
+                    WebProxy proxyRequest = new WebProxy();
 
-                    return reader.ReadToEnd();
-                }
-            }
-            catch (WebException we)
-            {
-                if (we.Response != null)
-                {
-                    Stream stReadData = we.Response.GetResponseStream();
-                    DataContractJsonSerializer ser2 = new DataContractJsonSerializer(typeof(Error));
-                    Error t = (Error) ser2.ReadObject(stReadData);
-
-                    throw new LinkhubException(t.code, t.message);
+                    Uri proxyURI = new Uri(this._ProxyAddress);
+                    proxyRequest.Address = proxyURI;
+                    proxyRequest.Credentials = new NetworkCredential(this._ProxyUserName, this._ProxyPassword);
+                    request.Proxy = proxyRequest;
                 }
 
-                throw new LinkhubException(-99999999, we.Message);
+                request.Method = "GET";
+
+                try
+                {
+                    HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+                    using (Stream stream = response.GetResponseStream())
+                    {
+                        StreamReader reader = new StreamReader(stream, Encoding.UTF8);
+
+                        return reader.ReadToEnd();
+                    }
+                }
+                catch (WebException we)
+                {
+                    if (we.Response != null)
+                    {
+                        Stream stReadData = we.Response.GetResponseStream();
+                        DataContractJsonSerializer ser2 = new DataContractJsonSerializer(typeof(Error));
+                        Error t = (Error)ser2.ReadObject(stReadData);
+
+                        throw new LinkhubException(t.code, t.message);
+                    }
+
+                    throw new LinkhubException(-99999999, we.Message);
+                }
             }
+           
         }
 
         public Token getToken(string ServiceID, string access_id, List<string> scope, string ForwardIP = null)
         {
-            return getToken(ServiceID, access_id, scope, null, false);
+            return getToken(ServiceID, access_id, scope, null, false, false);
         }
 
-        public Token getToken(string ServiceID, string access_id, List<string> scope, string ForwardIP = null, bool UseStaticIP = false)
+        public Token getToken(string ServiceID, string access_id, List<string> scope, string ForwardIP = null, bool UseStaticIP = false, bool UseLocalTimeYN)
         {
             if (string.IsNullOrEmpty(ServiceID)) throw new LinkhubException(-99999999, "ServiceID is Not entered");
 
@@ -124,7 +134,7 @@ namespace Linkhub
 
             string URI = (UseStaticIP ? ServiceURL_REAL_GA : ServiceURL_REAL) + "/" + ServiceID + "/Token";
 
-            string xDate = getTime(UseStaticIP);
+            string xDate = getTime(UseStaticIP, UseLocalTimeYN);
 
             HttpWebRequest request = (HttpWebRequest) WebRequest.Create(URI);
 
