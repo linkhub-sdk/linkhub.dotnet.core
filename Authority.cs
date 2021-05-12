@@ -123,7 +123,7 @@ namespace Linkhub
 
         public Token getToken(string ServiceID, string access_id, List<string> scope, string ForwardIP = null)
         {
-            return getToken(ServiceID, access_id, scope, null, false, false);
+            return getToken(ServiceID, access_id, scope, null, false, true);
         }
 
         public Token getToken(string ServiceID, string access_id, List<string> scope, string ForwardIP = null, bool UseStaticIP = false, bool UseLocalTimeYN = true)
