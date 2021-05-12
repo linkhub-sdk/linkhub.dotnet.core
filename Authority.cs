@@ -4,13 +4,13 @@
  * Functionalities are authentication for Linkhub api products, and to support
  * several base infomation(ex. Remain point).
  *
- * This library coded with .NetCore 2.0, To Process JSON and HMACSHA1.
+ * This library coded with .NetCore 2.0, To Process JSON and HMACSHA256.
  * If you need any other version of framework, plz contact with below. 
  * 
  * http://www.linkhub.co.kr
  * Author : LInkhub Dev (code@linkhub.com)
  * Written : 2018-10-25
- * Updated : 2021-04-12
+ * Updated : 2021-05-12
  * Thanks for your interest. 
  * 
  * =================================================================================
@@ -29,7 +29,7 @@ namespace Linkhub
 {
     public class Authority
     {
-        private const string APIVersion = "1.0";
+        private const string APIVersion = "2.0";
         private const string ServiceURL_REAL = "https://auth.linkhub.co.kr";
         private const string ServiceURL_REAL_GA = "https://ga-auth.linkhub.co.kr";
         private string _LinkID;
@@ -65,7 +65,7 @@ namespace Linkhub
 
         public string getTime()
         {
-            return getTime(false, false);
+            return getTime(false, true);
         }
         public string getTime(bool UseStaticIP, bool UseLocalTimeYN)
         {
@@ -126,7 +126,7 @@ namespace Linkhub
             return getToken(ServiceID, access_id, scope, null, false, false);
         }
 
-        public Token getToken(string ServiceID, string access_id, List<string> scope, string ForwardIP = null, bool UseStaticIP = false, bool UseLocalTimeYN = false)
+        public Token getToken(string ServiceID, string access_id, List<string> scope, string ForwardIP = null, bool UseStaticIP = false, bool UseLocalTimeYN = true)
         {
             if (string.IsNullOrEmpty(ServiceID)) throw new LinkhubException(-99999999, "ServiceID is Not entered");
 
@@ -168,16 +168,15 @@ namespace Linkhub
                 ms.Seek(0, SeekOrigin.Begin);
                 postData = new StreamReader(ms).ReadToEnd();
             }
-
+            
             string HMAC_target = "POST\n";
-            HMAC_target += Convert.ToBase64String(MD5.Create().ComputeHash(Encoding.UTF8.GetBytes(postData))) + "\n";
+            HMAC_target += Convert.ToBase64String(SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(postData))) + "\n";
             HMAC_target += xDate + "\n";
             if (ForwardIP != null) HMAC_target += ForwardIP + "\n";
             HMAC_target += APIVersion + "\n";
             HMAC_target += "/" + ServiceID + "/Token";
 
-            HMACSHA1 hmac = new HMACSHA1(Convert.FromBase64String(_SecretKey));
-
+            HMACSHA256 hmac = new HMACSHA256(Convert.FromBase64String(_SecretKey));
             string bearerToken = Convert.ToBase64String(hmac.ComputeHash(Encoding.UTF8.GetBytes(HMAC_target)));
 
             request.Headers.Add("Authorization", "LINKHUB" + " " + _LinkID + " " + bearerToken);
