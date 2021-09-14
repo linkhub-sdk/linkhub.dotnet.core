@@ -10,7 +10,7 @@
  * http://www.linkhub.co.kr
  * Author : LInkhub Dev (code@linkhub.com)
  * Written : 2018-10-25
- * Updated : 2021-05-12
+ * Updated : 2021-09-14
  * Thanks for your interest. 
  * 
  * =================================================================================
@@ -31,6 +31,7 @@ namespace Linkhub
     {
         private const string APIVersion = "2.0";
         private const string ServiceURL_REAL = "https://auth.linkhub.co.kr";
+        private const string ServiceURL_REAL_Static = "https://static-auth.linkhub.co.kr";
         private const string ServiceURL_REAL_GA = "https://ga-auth.linkhub.co.kr";
         private string _LinkID;
         private string _SecretKey;
@@ -65,9 +66,13 @@ namespace Linkhub
 
         public string getTime()
         {
-            return getTime(false, true);
+            return getTime(false, true, false);
         }
         public string getTime(bool UseStaticIP, bool UseLocalTimeYN)
+        {
+            return getTime(UseStaticIP, UseLocalTimeYN, false);
+        }
+        public string getTime(bool UseStaticIP, bool UseLocalTimeYN, bool UseGAIP)
         {
             if (UseLocalTimeYN)
             {
@@ -77,7 +82,7 @@ namespace Linkhub
 
             } else
             {
-                string URI = (UseStaticIP ? ServiceURL_REAL_GA : ServiceURL_REAL) + "/Time";
+                string URI = getTargetURL(UseStaticIP, UseGAIP) + "/Time";
 
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URI);
 
@@ -123,18 +128,23 @@ namespace Linkhub
 
         public Token getToken(string ServiceID, string access_id, List<string> scope, string ForwardIP = null)
         {
-            return getToken(ServiceID, access_id, scope, null, false, true);
+            return getToken(ServiceID, access_id, scope, null, false, true, false);
         }
 
         public Token getToken(string ServiceID, string access_id, List<string> scope, string ForwardIP = null, bool UseStaticIP = false, bool UseLocalTimeYN = true)
+        {
+            return getToken(ServiceID, access_id, scope, null, false, true, false);
+        }
+
+        public Token getToken(string ServiceID, string access_id, List<string> scope, string ForwardIP = null, bool UseStaticIP = false, bool UseLocalTimeYN = true, bool UseGAIP = false)
         {
             if (string.IsNullOrEmpty(ServiceID)) throw new LinkhubException(-99999999, "ServiceID is Not entered");
 
             Token result = new Token();
 
-            string URI = (UseStaticIP ? ServiceURL_REAL_GA : ServiceURL_REAL) + "/" + ServiceID + "/Token";
+            string URI = getTargetURL(UseStaticIP, UseGAIP) + "/" + ServiceID + "/Token";
 
-            string xDate = getTime(UseStaticIP, UseLocalTimeYN);
+            string xDate = getTime(UseStaticIP, UseLocalTimeYN, UseGAIP);
 
             HttpWebRequest request = (HttpWebRequest) WebRequest.Create(URI);
 
@@ -216,15 +226,19 @@ namespace Linkhub
 
         public double getBalance(string BearerToken, string ServiceID)
         {
-            return getBalance(BearerToken, ServiceID, false);
+            return getBalance(BearerToken, ServiceID, false, false);
+        }
+        public double getBalance(string BearerToken, string ServiceID, bool UseStaticIP)
+        {
+            return getBalance(BearerToken, ServiceID, false, false);
         }
         //연동회원 잔여포인트 확인
-        public double getBalance(string BearerToken, string ServiceID, bool UseStaticIP)
+        public double getBalance(string BearerToken, string ServiceID, bool UseStaticIP, bool UseGAIP)
         {
             if (string.IsNullOrEmpty(ServiceID)) throw new LinkhubException(-99999999, "ServiceID is Not entered");
             if (string.IsNullOrEmpty(BearerToken)) throw new LinkhubException(-99999999, "BearerToken is Not entered");
 
-            string URI = (UseStaticIP ? ServiceURL_REAL_GA : ServiceURL_REAL) + "/" + ServiceID + "/Point";
+            string URI = getTargetURL(UseStaticIP, UseGAIP) + "/" + ServiceID + "/Point";
             HttpWebRequest request = (HttpWebRequest) WebRequest.Create(URI);
 
             if (this._ProxyYN == true)
@@ -266,16 +280,19 @@ namespace Linkhub
 
         public double getPartnerBalance(string BearerToken, string ServiceID)
         {
-            return getPartnerBalance(BearerToken, ServiceID, false);
+            return getPartnerBalance(BearerToken, ServiceID, false, false);
         }
-
-        //파트너 잔여포인트 확인
         public double getPartnerBalance(string BearerToken, string ServiceID, bool UseStaticIP)
+        {
+            return getPartnerBalance(BearerToken, ServiceID, false, false);
+        }
+        //파트너 잔여포인트 확인
+        public double getPartnerBalance(string BearerToken, string ServiceID, bool UseStaticIP, bool UseGAIP)
         {
             if (string.IsNullOrEmpty(ServiceID)) throw new LinkhubException(-99999999, "ServiceID is Not entered");
             if (string.IsNullOrEmpty(BearerToken)) throw new LinkhubException(-99999999, "BearerToken is Not entered");
 
-            string URI = (UseStaticIP ? ServiceURL_REAL_GA : ServiceURL_REAL) + "/" + ServiceID + "/PartnerPoint";
+            string URI = getTargetURL(UseStaticIP, UseGAIP) + "/" + ServiceID + "/PartnerPoint";
             HttpWebRequest request = (HttpWebRequest) WebRequest.Create(URI);
 
             if (this._ProxyYN == true)
@@ -316,16 +333,20 @@ namespace Linkhub
 
         public string getPartnerURL(string BearerToken, string ServiceID, string TOGO)
         {
-            return getPartnerURL(BearerToken, ServiceID, TOGO, false);
+            return getPartnerURL(BearerToken, ServiceID, TOGO, false, false);
+        }
+        public string getPartnerURL(string BearerToken, string ServiceID, string TOGO, bool UseStaticIP)
+        {
+            return getPartnerURL(BearerToken, ServiceID, TOGO, false, false);
         }
         //파트너 포인트충전 팝업 URL
-        public string getPartnerURL(string BearerToken, string ServiceID, string TOGO, bool UseStaticIP)
+        public string getPartnerURL(string BearerToken, string ServiceID, string TOGO, bool UseStaticIP, bool UseGAIP)
         {
             
             if (string.IsNullOrEmpty(ServiceID)) throw new LinkhubException(-99999999, "ServiceID is Not entered");
             if (string.IsNullOrEmpty(BearerToken)) throw new LinkhubException(-99999999, "BearerToken is Not entered");
             
-            string URI = (UseStaticIP ? ServiceURL_REAL_GA : ServiceURL_REAL) + "/" + ServiceID + "/URL?TG=" + TOGO;
+            string URI = getTargetURL(UseStaticIP, UseGAIP) + "/" + ServiceID + "/URL?TG=" + TOGO;
             HttpWebRequest request = (HttpWebRequest) WebRequest.Create(URI);
 
             if (this._ProxyYN == true)
@@ -362,6 +383,22 @@ namespace Linkhub
                 }
 
                 throw new LinkhubException(-99999999, we.Message);
+            }
+        }
+
+        private string getTargetURL(bool UseStaticIP, bool UseGAIP)
+        {
+            if (UseGAIP)
+            {
+                return ServiceURL_REAL_GA;
+            }
+            else if (UseStaticIP)
+            {
+                return ServiceURL_REAL_Static;
+            }
+            else
+            {
+                return ServiceURL_REAL;
             }
         }
 
