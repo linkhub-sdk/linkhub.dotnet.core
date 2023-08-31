@@ -10,7 +10,7 @@
  * http://www.linkhub.co.kr
  * Author : LInkhub Dev (code@linkhub.com)
  * Written : 2018-10-25
- * Updated : 2021-09-14
+ * Updated : 2023-08-29
  * Thanks for your interest. 
  * 
  * =================================================================================
@@ -35,11 +35,18 @@ namespace Linkhub
         private const string ServiceURL_REAL_GA = "https://ga-auth.linkhub.co.kr";
         private string _LinkID;
         private string _SecretKey;
+        private string _AuthURL;
 
         private bool _ProxyYN;
         private String _ProxyAddress;
         private String _ProxyUserName;
         private String _ProxyPassword;
+
+        public String AuthURL
+        {
+            set { _AuthURL = value; }
+            get { return _AuthURL; }
+        }
 
         public Authority(string LinkID, string SecretKey)
         {
@@ -80,7 +87,8 @@ namespace Linkhub
 
                 return localTime.ToString("yyyy-MM-ddTHH:mm:ssZ");
 
-            } else
+            }
+            else
             {
                 string URI = getTargetURL(UseStaticIP, UseGAIP) + "/Time";
 
@@ -123,7 +131,7 @@ namespace Linkhub
                     throw new LinkhubException(-99999999, we.Message);
                 }
             }
-           
+
         }
 
         public Token getToken(string ServiceID, string access_id, List<string> scope, string ForwardIP = null)
@@ -146,7 +154,7 @@ namespace Linkhub
 
             string xDate = getTime(UseStaticIP, UseLocalTimeYN, UseGAIP);
 
-            HttpWebRequest request = (HttpWebRequest) WebRequest.Create(URI);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URI);
 
             if (this._ProxyYN == true)
             {
@@ -178,7 +186,7 @@ namespace Linkhub
                 ms.Seek(0, SeekOrigin.Begin);
                 postData = new StreamReader(ms).ReadToEnd();
             }
-            
+
             string HMAC_target = "POST\n";
             HMAC_target += Convert.ToBase64String(SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(postData))) + "\n";
             HMAC_target += xDate + "\n";
@@ -201,19 +209,19 @@ namespace Linkhub
 
             try
             {
-                HttpWebResponse response = (HttpWebResponse) request.GetResponse();
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 Stream stReadData = response.GetResponseStream();
                 DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(Token));
 
-                result = (Token) ser.ReadObject(stReadData);
+                result = (Token)ser.ReadObject(stReadData);
             }
             catch (Exception we)
             {
-                if (we is WebException && ((WebException) we).Response != null)
+                if (we is WebException && ((WebException)we).Response != null)
                 {
-                    Stream stReadData = ((WebException) we).Response.GetResponseStream();
+                    Stream stReadData = ((WebException)we).Response.GetResponseStream();
                     DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(Error));
-                    Error t = (Error) ser.ReadObject(stReadData);
+                    Error t = (Error)ser.ReadObject(stReadData);
 
                     throw new LinkhubException(t.code, t.message);
                 }
@@ -239,7 +247,7 @@ namespace Linkhub
             if (string.IsNullOrEmpty(BearerToken)) throw new LinkhubException(-99999999, "BearerToken is Not entered");
 
             string URI = getTargetURL(UseStaticIP, UseGAIP) + "/" + ServiceID + "/Point";
-            HttpWebRequest request = (HttpWebRequest) WebRequest.Create(URI);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URI);
 
             if (this._ProxyYN == true)
             {
@@ -256,10 +264,10 @@ namespace Linkhub
 
             try
             {
-                HttpWebResponse response = (HttpWebResponse) request.GetResponse();
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 Stream stReadData = response.GetResponseStream();
                 DataContractJsonSerializer ser2 = new DataContractJsonSerializer(typeof(PointResult));
-                PointResult result = (PointResult) ser2.ReadObject(stReadData);
+                PointResult result = (PointResult)ser2.ReadObject(stReadData);
 
                 return result.remainPoint;
             }
@@ -269,7 +277,7 @@ namespace Linkhub
                 {
                     Stream stReadData = we.Response.GetResponseStream();
                     DataContractJsonSerializer ser2 = new DataContractJsonSerializer(typeof(Error));
-                    Error t = (Error) ser2.ReadObject(stReadData);
+                    Error t = (Error)ser2.ReadObject(stReadData);
 
                     throw new LinkhubException(t.code, t.message);
                 }
@@ -293,7 +301,7 @@ namespace Linkhub
             if (string.IsNullOrEmpty(BearerToken)) throw new LinkhubException(-99999999, "BearerToken is Not entered");
 
             string URI = getTargetURL(UseStaticIP, UseGAIP) + "/" + ServiceID + "/PartnerPoint";
-            HttpWebRequest request = (HttpWebRequest) WebRequest.Create(URI);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URI);
 
             if (this._ProxyYN == true)
             {
@@ -310,10 +318,10 @@ namespace Linkhub
 
             try
             {
-                HttpWebResponse response = (HttpWebResponse) request.GetResponse();
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 Stream stReadData = response.GetResponseStream();
                 DataContractJsonSerializer ser2 = new DataContractJsonSerializer(typeof(PointResult));
-                PointResult result = (PointResult) ser2.ReadObject(stReadData);
+                PointResult result = (PointResult)ser2.ReadObject(stReadData);
 
                 return result.remainPoint;
             }
@@ -323,7 +331,7 @@ namespace Linkhub
                 {
                     Stream stReadData = we.Response.GetResponseStream();
                     DataContractJsonSerializer ser2 = new DataContractJsonSerializer(typeof(Error));
-                    Error t = (Error) ser2.ReadObject(stReadData);
+                    Error t = (Error)ser2.ReadObject(stReadData);
                     throw new LinkhubException(t.code, t.message);
                 }
 
@@ -342,12 +350,12 @@ namespace Linkhub
         //파트너 포인트충전 팝업 URL
         public string getPartnerURL(string BearerToken, string ServiceID, string TOGO, bool UseStaticIP, bool UseGAIP)
         {
-            
+
             if (string.IsNullOrEmpty(ServiceID)) throw new LinkhubException(-99999999, "ServiceID is Not entered");
             if (string.IsNullOrEmpty(BearerToken)) throw new LinkhubException(-99999999, "BearerToken is Not entered");
-            
+
             string URI = getTargetURL(UseStaticIP, UseGAIP) + "/" + ServiceID + "/URL?TG=" + TOGO;
-            HttpWebRequest request = (HttpWebRequest) WebRequest.Create(URI);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URI);
 
             if (this._ProxyYN == true)
             {
@@ -365,10 +373,10 @@ namespace Linkhub
 
             try
             {
-                HttpWebResponse response = (HttpWebResponse) request.GetResponse();
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 Stream stReadData = response.GetResponseStream();
                 DataContractJsonSerializer ser2 = new DataContractJsonSerializer(typeof(URLResult));
-                URLResult result = (URLResult) ser2.ReadObject(stReadData);
+                URLResult result = (URLResult)ser2.ReadObject(stReadData);
 
                 return result.url;
             }
@@ -378,7 +386,7 @@ namespace Linkhub
                 {
                     Stream stReadData = we.Response.GetResponseStream();
                     DataContractJsonSerializer ser2 = new DataContractJsonSerializer(typeof(Error));
-                    Error t = (Error) ser2.ReadObject(stReadData);
+                    Error t = (Error)ser2.ReadObject(stReadData);
                     throw new LinkhubException(t.code, t.message);
                 }
 
@@ -388,6 +396,11 @@ namespace Linkhub
 
         private string getTargetURL(bool UseStaticIP, bool UseGAIP)
         {
+            if (_AuthURL != null)
+            {
+                return _AuthURL;
+            }
+
             if (UseGAIP)
             {
                 return ServiceURL_REAL_GA;
