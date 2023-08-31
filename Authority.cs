@@ -10,9 +10,11 @@
  * http://www.linkhub.co.kr
  * Author : LInkhub Dev (code@linkhub.com)
  * Written : 2018-10-25
- * Updated : 2023-08-29
+ * Updated : 2023-08-31
  * Thanks for your interest. 
  * 
+ * Update Log
+ * - 2023/08/31 AuthURL Setter added
  * =================================================================================
 */
 
