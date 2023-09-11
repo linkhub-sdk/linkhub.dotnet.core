@@ -201,6 +201,8 @@ namespace Linkhub
 
             request.Headers.Add("Authorization", "LINKHUB" + " " + _LinkID + " " + bearerToken);
 
+            request.Headers.Add("User-Agent", "DOTNETCORE LINKHUB SDK");
+
             request.Method = "POST";
 
             byte[] btPostDAta = Encoding.UTF8.GetBytes(postData);
@@ -262,6 +264,9 @@ namespace Linkhub
             }
 
             request.Headers.Add("Authorization", "Bearer" + " " + BearerToken);
+
+            request.Headers.Add("User-Agent", "DOTNETCORE LINKHUB SDK");
+
             request.Method = "GET";
 
             try
@@ -316,6 +321,9 @@ namespace Linkhub
             }
 
             request.Headers.Add("Authorization", "Bearer" + " " + BearerToken);
+
+            request.Headers.Add("User-Agent", "DOTNETCORE LINKHUB SDK");
+
             request.Method = "GET";
 
             try
@@ -371,6 +379,9 @@ namespace Linkhub
 
 
             request.Headers.Add("Authorization", "Bearer" + " " + BearerToken);
+
+            request.Headers.Add("User-Agent", "DOTNETCORE LINKHUB SDK");
+
             request.Method = "GET";
 
             try
