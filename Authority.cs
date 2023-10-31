@@ -10,9 +10,9 @@
  * http://www.linkhub.co.kr
  * Author : LInkhub Dev (code@linkhub.com)
  * Written : 2018-10-25
- * Updated : 2023-08-31
- * Thanks for your interest. 
- * 
+ * Updated : 2023-11-01
+ * Thanks for your interest.
+ *
  * Update Log
  * - 2023/08/31 AuthURL Setter added
  * =================================================================================
@@ -407,6 +407,49 @@ namespace Linkhub
             }
         }
 
+        public MemberPointDetail getBalanceDetail(string BearerToken, string ServiceID, bool UseStaticIP, bool UseGAIP)
+        {
+            if (string.IsNullOrEmpty(BearerToken)) throw new LinkhubException(-99999999, "BearerToken이 입력되지 않았습니다.");
+            if (string.IsNullOrEmpty(ServiceID)) throw new LinkhubException(-99999999, "서비스아이디가 입력되지 않았습니다.");
+
+            string URI = getTargetURL(UseStaticIP, UseGAIP) + "/" + ServiceID + "/TotalPoint";
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URI);
+
+            if (this._ProxyYN == true)
+            {
+                WebProxy proxyRequest = new WebProxy();
+
+                Uri proxyURI = new Uri(this._ProxyAddress);
+                proxyRequest.Address = proxyURI;
+                proxyRequest.Credentials = new NetworkCredential(this._ProxyUserName, this._ProxyPassword);
+                request.Proxy = proxyRequest;
+            }
+
+            request.Headers.Add("Authorization", "Bearer" + " " + BearerToken);
+
+            request.Headers.Add("User-Agent", "DOTNETCORE LINKHUB SDK");
+
+            request.Method = "GET";
+
+            try
+            {
+                MemberPointDetail result = parseResponse<MemberPointDetail>(request);
+                return result;
+            }
+            catch (WebException we)
+            {
+                if (we.Response != null)
+                {
+                    Stream stReadData = we.Response.GetResponseStream();
+                    DataContractJsonSerializer ser2 = new DataContractJsonSerializer(typeof(Error));
+                    Error t = (Error)ser2.ReadObject(stReadData);
+                    throw new LinkhubException(t.code, t.message);
+                }
+
+                throw new LinkhubException(-99999999, we.Message);
+            }
+        }
+
         private string getTargetURL(bool UseStaticIP, bool UseGAIP)
         {
             if (_AuthURL != null)
@@ -452,6 +495,23 @@ namespace Linkhub
         public class URLResult
         {
             [DataMember] public string url;
+        }
+
+        [DataContract]
+        public class MemberPointDetail
+        {
+            [DataMember] public string totalPoint;
+            [DataMember] public string chargePoint;
+            [DataMember] public string bonusPoint;
+        }
+
+        private T parseResponse<T>(HttpWebRequest request)
+        {
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            Stream stReadData = response.GetResponseStream();
+            DataContractJsonSerializer ser2 = new DataContractJsonSerializer(typeof(T));
+            T result = (T)ser2.ReadObject(stReadData);
+            return result;
         }
     }
 }
