@@ -40,11 +40,11 @@ namespace Linkhub
         private string _AuthURL;
 
         private bool _ProxyYN;
-        private String _ProxyAddress;
-        private String _ProxyUserName;
-        private String _ProxyPassword;
+        private string _ProxyAddress;
+        private string _ProxyUserName;
+        private string _ProxyPassword;
 
-        public String AuthURL
+        public string AuthURL
         {
             set { _AuthURL = value; }
             get { return _AuthURL; }
@@ -62,8 +62,8 @@ namespace Linkhub
 
         public Authority(string LinkID, string SecretKey, bool ProxyYN, string ProxyAddress, string ProxyUserName, string ProxyPassword)
         {
-            if (String.IsNullOrEmpty(LinkID)) throw new LinkhubException(-99999999, "NO LinkID");
-            if (String.IsNullOrEmpty(SecretKey)) throw new LinkhubException(-99999999, "NO SecretKey");
+            if (string.IsNullOrEmpty(LinkID)) throw new LinkhubException(-99999999, "NO LinkID");
+            if (string.IsNullOrEmpty(SecretKey)) throw new LinkhubException(-99999999, "NO SecretKey");
 
             this._LinkID = LinkID;
             this._SecretKey = SecretKey;
