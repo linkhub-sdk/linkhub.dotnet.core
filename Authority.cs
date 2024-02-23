@@ -95,6 +95,7 @@ namespace Linkhub
                 string URI = getTargetURL(UseStaticIP, UseGAIP) + "/Time";
 
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URI);
+                request.Timeout = 180000;
 
                 if (this._ProxyYN == true)
                 {
@@ -157,6 +158,7 @@ namespace Linkhub
             string xDate = getTime(UseStaticIP, UseLocalTimeYN, UseGAIP);
 
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URI);
+            request.Timeout = 180000;
 
             if (this._ProxyYN == true)
             {
@@ -252,6 +254,7 @@ namespace Linkhub
 
             string URI = getTargetURL(UseStaticIP, UseGAIP) + "/" + ServiceID + "/Point";
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URI);
+            request.Timeout = 180000;
 
             if (this._ProxyYN == true)
             {
@@ -309,6 +312,7 @@ namespace Linkhub
 
             string URI = getTargetURL(UseStaticIP, UseGAIP) + "/" + ServiceID + "/PartnerPoint";
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URI);
+            request.Timeout = 180000;
 
             if (this._ProxyYN == true)
             {
@@ -366,6 +370,7 @@ namespace Linkhub
 
             string URI = getTargetURL(UseStaticIP, UseGAIP) + "/" + ServiceID + "/URL?TG=" + TOGO;
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URI);
+            request.Timeout = 180000;
 
             if (this._ProxyYN == true)
             {
@@ -414,6 +419,7 @@ namespace Linkhub
 
             string URI = getTargetURL(UseStaticIP, UseGAIP) + "/" + ServiceID + "/TotalPoint";
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URI);
+            request.Timeout = 180000;
 
             if (this._ProxyYN == true)
             {
