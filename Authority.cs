@@ -8,9 +8,9 @@
  * If you need any other version of framework, plz contact with below. 
  * 
  * http://www.linkhub.co.kr
- * Author : LInkhub Dev (code@linkhub.com)
+ * Author : LInkhub Dev (code@linkhubcorp.com)
  * Written : 2018-10-25
- * Updated : 2023-11-01
+ * Updated : 2024-02-26
  * Thanks for your interest.
  *
  * Update Log
