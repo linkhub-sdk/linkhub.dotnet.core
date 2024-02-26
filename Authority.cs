@@ -107,6 +107,8 @@ namespace Linkhub
                     request.Proxy = proxyRequest;
                 }
 
+                request.Headers.Add("User-Agent", "DOTNETCORE LINKHUB SDK");
+
                 request.Method = "GET";
 
                 try
